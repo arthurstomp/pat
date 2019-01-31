@@ -35,11 +35,19 @@ gem 'jbuilder', '~> 2.5'
 
 # Reduces boot times through caching; required in config/boot.rb
 gem 'bootsnap', '>= 1.1.0', require: false
+gem 'pundit', '~> 2.0', '>= 2.0.1'
+gem 'paper_trail', '~> 10.2'
 
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
   gem 'byebug', platforms: [:mri, :mingw, :x64_mingw]
   gem 'rspec-rails', '~> 3.8'
+  gem 'database_cleaner', '~> 1.7'
+  gem 'factory_bot', '~> 4.11', '>= 4.11.1'
+  gem 'shoulda-matchers', '~> 3.1', '>= 3.1.3'
+  # Required by shoulda-matchers for Rails > 5.0
+  gem 'rails-controller-testing'
+  gem 'faker', '~> 1.9', '>= 1.9.1'
 end
 
 group :development do
