@@ -2,10 +2,9 @@ class Employee < ApplicationRecord
   Roles = {admin: 'administrator', employee: 'employee'}
   belongs_to :company
   belongs_to :department
-  belongs_to :user
+  belongs_to :user, inverse_of: :jobs
 
-  validates :name, :company_id, :department_id, presence: true
-  validates :user_id, uniqueness: true
+  validates :company_id, :department_id, presence: true
   validate :validate_role
 
   def admin?

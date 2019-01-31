@@ -1,31 +1,34 @@
-Factory.define do
-  define Employee do
+require 'faker'
+
+FactoryBot.define do
+  factory :employee do
     company
     department
     user
-    name { Fake::RickAndMorty.character }
     role { "employee" }
 
     trait :admin do
       role { "administrator" }
     end
+
+    factory :employee_admin, traits: [:admin]
   end
 
-  define User do
+  factory :user do
     sequence :email do |n|
       "user#{n}@test.com"
     end
 
-    email
-    username { Fake::RickAndMorty.character }
-    employee
+    username { Faker::RickAndMorty.character }
   end
 
-  define Company do
-    name { Fake::GameOfThrones.house }
+  factory :company do
+    name { Faker::GameOfThrones.house }
+    association :user, factory: :user
   end
 
-  define Department do
-    name { Fake::GameOfThrones.house }
+  factory :department do
+    name { Faker::GameOfThrones.house }
+    association :company, factory: :company
   end
 end
