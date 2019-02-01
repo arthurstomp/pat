@@ -1,5 +1,25 @@
 {
   "name": "pat",
   "private": true,
-  "dependencies": {}
+  "dependencies": {
+    "@rails/webpacker": "3.5",
+    "webpack": "^3.0.0",
+    "jquery": "^3.3.1",
+    "popper.js": "^1.14.6",
+    "caniuse-lite": "^1.0.30000697",
+    "babel-preset-react": "^6.24.1",
+    "bootstrap": "^4.2.1",
+    "prop-types": "^15.6.2",
+    "react": "^16.7.0",
+    "react-bootstrap": "^1.0.0-beta.5",
+    "react-dom": "^16.7.0",
+    "redux": "^4.0.1",
+    "react-redux": "^6.0.0",
+    "react-router": "^4.3.1",
+    "react-router-dom": "^4.3.1",
+    "react_ujs": "^2.4.4"
+  },
+  "devDependencies": {
+    "webpack-dev-server": "2.11.2"
+  }
 }

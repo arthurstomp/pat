@@ -1,0 +1,55 @@
+$navi-blue: #004489;
+$lighter-white: #E1E1D6;
+$light-white: #DBDBCE;
+$ice-white: #D3D9DF;
+$dark-gray: #989898;
+$darker-gray: #565656;
+
+$navbar-height: 10vh;
+$theather-height: 100vh - $navbar-height;
+
+html, body {
+  height: 100%;
+  margin: 0px;
+  padding: 0px;
+}
+
+.lighter-white { color: $lighter-white; }
+.ice-white { color: $ice-white; }
+
+.navi-blue-bg {
+  background-color: $navi-blue;
+  .navbar-brand { 
+    margin-left: 10vw;
+    color: $ice-white;
+  }
+
+  #user-nav {
+    color: $lighter-white;
+    background-color: $dark-gray;
+    margin-right: 7vw;
+    border-radius: 5px;
+  }
+}
+
+#patbar {
+  height: $navbar-height;
+}
+
+#sidebar {
+  background-color: $dark-gray;
+  color: $lighter-white;
+}
+
+.full {
+  height: 100%;
+}
+
+#theather {
+  //height: 92.5vh;
+  height: $theather-height;
+}
+
+#stage {
+}
+

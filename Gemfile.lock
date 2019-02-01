@@ -43,6 +43,10 @@ GEM
       minitest (~> 5.1)
       tzinfo (~> 1.1)
     arel (9.0.0)
+    babel-source (5.8.35)
+    babel-transpiler (0.7.0)
+      babel-source (>= 4.0, < 6)
+      execjs (~> 2.0)
     bindex (0.5.0)
     bootsnap (1.3.2)
       msgpack (~> 1.0)
@@ -56,10 +60,15 @@ GEM
       execjs
     coffee-script-source (1.12.2)
     concurrent-ruby (1.1.4)
+    connection_pool (2.2.2)
     crass (1.0.4)
     database_cleaner (1.7.0)
     diff-lcs (1.3)
     docile (1.3.1)
+    dotenv (2.6.0)
+    dotenv-rails (2.6.0)
+      dotenv (= 2.6.0)
+      railties (>= 3.2, < 6.0)
     erubi (1.8.0)
     execjs (2.7.0)
     factory_bot (4.11.1)
@@ -110,6 +119,8 @@ GEM
     pundit-matchers (1.6.0)
       rspec-rails (>= 3.0.0)
     rack (2.0.6)
+    rack-proxy (0.6.5)
+      rack
     rack-test (1.1.0)
       rack (>= 1.0, < 3)
     rails (5.2.2)
@@ -144,6 +155,12 @@ GEM
     rb-fsevent (0.10.3)
     rb-inotify (0.10.0)
       ffi (~> 1.0)
+    react-rails (2.4.7)
+      babel-transpiler (>= 0.7.0)
+      connection_pool
+      execjs
+      railties (>= 3.2)
+      tilt
     request_store (1.4.1)
       rack (>= 1.4)
     rspec-core (3.8.0)
@@ -209,6 +226,10 @@ GEM
       activemodel (>= 5.0)
       bindex (>= 0.4.0)
       railties (>= 5.0)
+    webpacker (3.5.5)
+      activesupport (>= 4.2)
+      rack-proxy (>= 0.6.1)
+      railties (>= 4.2)
     websocket-driver (0.7.0)
       websocket-extensions (>= 0.1.0)
     websocket-extensions (0.1.3)
@@ -221,6 +242,7 @@ DEPENDENCIES
   byebug
   coffee-rails (~> 4.2)
   database_cleaner (~> 1.7)
+  dotenv-rails
   factory_bot_rails (~> 4.0)
   faker (~> 1.9, >= 1.9.1)
   jbuilder (~> 2.5)
@@ -233,6 +255,7 @@ DEPENDENCIES
   pundit-matchers (~> 1.6.0)
   rails (~> 5.2.2)
   rails-controller-testing
+  react-rails
   rspec-rails (~> 3.8)
   sass-rails (~> 5.0)
   shoulda-matchers (~> 3.1, >= 3.1.3)
@@ -243,6 +266,7 @@ DEPENDENCIES
   tzinfo-data
   uglifier (>= 1.3.0)
   web-console (>= 3.3.0)
+  webpacker
 
 RUBY VERSION
    ruby 2.5.3p105

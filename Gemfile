@@ -38,6 +38,9 @@ gem 'bootsnap', '>= 1.1.0', require: false
 gem 'pundit', '~> 2.0', '>= 2.0.1'
 gem 'paper_trail', '~> 10.2'
 gem 'jwt', '~> 2.1'
+gem 'dotenv-rails', require: 'dotenv/rails-now'
+gem 'webpacker'
+gem 'react-rails'
 
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console

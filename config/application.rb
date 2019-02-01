@@ -29,5 +29,10 @@ module Pat
 
     # Don't generate system test files.
     config.generators.system_tests = nil
+
+    config.jwt_auth = {
+      secret: ENV["JWT_SECRET"],
+      alg: ENV["JWT_ALG"] || "HS256"
+    }
   end
 end
