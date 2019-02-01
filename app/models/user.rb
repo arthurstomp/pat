@@ -93,4 +93,18 @@ class User < ApplicationRecord
   def claim
     {email: email, username: username}
   end
+
+  def jwt
+    JWT.encode claim,
+      Pat::Application.config.jwt_auth[:secret],
+      Pat::Application.config.jwt_auth[:alg]
+  end
+
+  def to_builder
+    JBuilder.new do |user|
+      user.email email
+      user.username username
+      user.jwt jwt
+    end
+  end
 end
