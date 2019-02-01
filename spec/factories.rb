@@ -18,8 +18,9 @@ FactoryBot.define do
     sequence :email do |n|
       "user#{n}@test.com"
     end
-
-    username { Faker::RickAndMorty.character }
+    sequence :username do |n|
+      "user#{n}"
+    end
   end
 
   factory :company do

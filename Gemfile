@@ -50,6 +50,7 @@ group :development, :test do
   gem 'rails-controller-testing'
   gem 'faker', '~> 1.9', '>= 1.9.1'
   gem 'pundit-matchers', '~> 1.6.0'
+  gem 'simplecov', require: false
 end
 
 group :development do

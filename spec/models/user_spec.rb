@@ -57,38 +57,111 @@ RSpec.describe User, type: :model do
   it { should_not allow_value("test").for(:email) }
   it { should_not allow_value("test@test").for(:email) }
 
-  describe "#owner?" do
+  describe "#connected_to_companies" do
     subject { create :user }
-    it { expect(subject.owner?(1)).to eq false }
+    before :each do
+      subject.owned_companies.create name: "Test!"
+      someone_company = create(:company)
+      someone_company.employees.create user: subject
+    end
+
+    it "should include owned_companies" do
+      expect(subject.connected_to_companies).
+        to include(*subject.owned_companies)
+    end
+    
+    it "should include employee_of_companies" do
+      expect(subject.connected_to_companies).
+        to include(*subject.employee_of_companies)
+    end
+
+    it "count should be eq owned_companies + employee_of_companies" do
+      owned_count = subject.owned_companies.count
+      employee_count = subject.employee_of_companies.count
+      expected_count = owned_count + employee_count
+      expect(subject.connected_to_companies.count).to eq expected_count
+    end
+  end
+
+  describe "#connected_to_departments" do
+    subject { create :user }
+    before :each do
+      c = subject.owned_companies.create name: "Test!"
+      d = c.departments.create name: "HR"
+      someone_company = create(:company)
+      sd = someone_company.departments.create name: "Dev"
+      someone_company.employees.create user: subject, department: sd
+    end
+
+    it "should include owned_departments" do
+      expect(subject.connected_to_departments).
+        to include(*subject.owned_departments)
+    end
+    
+    it "should include employee_of_departments" do
+      expect(subject.connected_to_departments).
+        to include(*subject.employee_of_departments)
+    end
+
+    it "count should be eq owned_departments + employee_of_departments" do
+      owned_count = subject.owned_departments.count
+      employee_count = subject.employee_of_departments.count
+      expected_count = owned_count + employee_count
+      expect(subject.connected_to_departments.count).to eq expected_count
+    end
+  end
+
+  describe "#owner_of?" do
+    subject { create :user }
+    it { expect(subject.owner_of?(1)).to eq false }
 
     context "Company" do
       it "expect to return true" do
         c = subject.owned_companies.create(name: "Test")
-        expect(subject.owner?(c)).to eq true
+        expect(subject.owner_of?(c)).to eq true
       end
 
       it "expect to return false" do
         c = create(:company)
-        expect(subject.owner?(c)).to eq false 
+        expect(subject.owner_of?(c)).to eq false 
       end
     end
 
     context "Department" do
       it "expect to return true" do
         c = subject.owned_departments.create(name: "Test")
-        expect(subject.owner?(c)).to eq true
+        expect(subject.owner_of?(c)).to eq true
       end
 
       it "expect to return false" do
         c = create(:department)
-        expect(subject.owner?(c)).to eq false 
+        expect(subject.owner_of?(c)).to eq false 
       end
     end
   end
 
   describe "#admin?" do
+    it { expect(subject.admin?).to eq false }
+
+    it "returns true if user owns any company" do
+      allow(subject).to receive(:owned_companies).and_return([1])
+      expect(subject.admin?).to eq true
+    end
+
+    it "returns true if user is admin of any company" do
+      allow(subject).to receive(:admin_of_companies).and_return([1])
+      expect(subject.admin?).to eq true
+    end
+
+    it "returns true if user is admin of any department" do
+      allow(subject).to receive(:admin_of_departments).and_return([1])
+      expect(subject.admin?).to eq true
+    end
+  end
+
+  describe "#admin_of?" do
     subject { create :user }
-    it { expect(subject.admin?(1)).to eq false }
+    it { expect(subject.admin_of?(1)).to eq false }
 
     context "Company" do
       it "expect to return true" do
@@ -97,7 +170,7 @@ RSpec.describe User, type: :model do
                    company: c,
                    user: subject,
                    role: Employee::Roles[:admin])
-        expect(subject.admin?(c)).to eq true
+        expect(subject.admin_of?(c)).to eq true
       end
 
       it "expect to return false" do
@@ -105,7 +178,7 @@ RSpec.describe User, type: :model do
         e = create(:employee,
                    company: c,
                    user: subject)
-        expect(subject.admin?(c)).to eq false 
+        expect(subject.admin_of?(c)).to eq false 
       end
     end
 
@@ -118,7 +191,7 @@ RSpec.describe User, type: :model do
                    department: d, 
                    user: subject,
                    role: Employee::Roles[:admin])
-        expect(subject.admin?(c)).to eq true
+        expect(subject.admin_of?(c)).to eq true
       end
 
       it "expect to return false" do
@@ -128,36 +201,36 @@ RSpec.describe User, type: :model do
                    company: c,
                    department: d, 
                    user: subject)
-        expect(subject.admin?(c)).to eq false 
+        expect(subject.admin_of?(c)).to eq false 
       end
     end
   end
 
-  describe "#member?" do
+  describe "#member_of?" do
     subject { create :user }
-    it { expect(subject.member?(1)).to eq false }
+    it { expect(subject.member_of?(1)).to eq false }
 
     context "Company" do
       it "expect to return true" do
         c = subject.owned_companies.create(name: "Test")
-        expect(subject.member?(c)).to eq true
+        expect(subject.member_of?(c)).to eq true
       end
 
       it "expect to return false" do
         c = create(:company)
-        expect(subject.member?(c)).to eq false 
+        expect(subject.member_of?(c)).to eq false 
       end
     end
 
     context "Department" do
       it "expect to return true" do
         c = subject.owned_departments.create(name: "Test")
-        expect(subject.member?(c)).to eq true
+        expect(subject.member_of?(c)).to eq true
       end
 
       it "expect to return false" do
         c = create(:department)
-        expect(subject.member?(c)).to eq false 
+        expect(subject.member_of?(c)).to eq false 
       end
     end
   end

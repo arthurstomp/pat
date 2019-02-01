@@ -1,4 +1,6 @@
 class User < ApplicationRecord
+  default_scope { order(created_at: :desc) }
+
   has_many :jobs,
     class_name: "Employee",
     dependent: :destroy
@@ -28,8 +30,24 @@ class User < ApplicationRecord
 
   validates :email, :username, presence: true, uniqueness: true
   validates_format_of :email, :with => /\A([^@\s]+)@((?:[-a-z0-9]+\.)+[a-z]{2,})\z/i
+  
+  def connected_to_companies
+    owned_ids = owned_companies.pluck(:id)
+    employed_ids = employee_of_companies.pluck(:id)
+    connected_ids = (owned_ids + employed_ids).uniq
 
-  def owner?(structure)
+    Company.where(id: connected_ids)
+  end
+
+  def connected_to_departments
+    owned_ids = owned_departments.pluck(:id)
+    employed_ids = employee_of_departments.pluck(:id)
+    connected_ids = (owned_ids + employed_ids).uniq
+
+    Department.where(id: connected_ids)
+  end
+
+  def owner_of?(structure)
     case structure
     when Company
       owned_companies.include?(structure)
@@ -40,26 +58,32 @@ class User < ApplicationRecord
     end
   end
 
-  def admin?(structure)
+  def admin?
+    owned_companies.count != 0 ||
+      admin_of_companies.count != 0 ||
+      admin_of_departments.count != 0
+  end
+
+  def admin_of?(structure)
     case structure
     when Company
-       owner?(structure)||
+       owner_of?(structure)||
         admin_of_companies.include?(structure)
     when Department
-      owner?(structure) ||
+      owner_of?(structure) ||
         admin_of_departments.include?(structure)
     else
       false
     end
   end
 
-  def member?(structure)
+  def member_of?(structure)
     case structure
     when Company
-       admin?(structure)||
+       admin_of?(structure)||
         employee_of_companies.include?(structure)
     when Department
-      admin?(structure) ||
+      admin_of?(structure) ||
         employee_of_departments.include?(structure)
     else
       false

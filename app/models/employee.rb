@@ -1,5 +1,8 @@
 class Employee < ApplicationRecord
   Roles = {admin: 'administrator', employee: 'employee'}
+
+  default_scope { order(created_at: :desc) }
+  j
   belongs_to :company
   belongs_to :department
   belongs_to :user, inverse_of: :jobs
