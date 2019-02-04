@@ -1,41 +1,50 @@
 import React from "react";
 import PropTypes from "prop-types";
 
-import UserSettingsForm from "./profile/UserSettingsForm";
-import JobsTable from "../shared/JobsTable";
-import CompaniesTable from "../shared/CompaniesTable";
+import UserForm from "../UserForm";
+import { Alert } from "react-bootstrap"
 
 class Profile extends React.Component {
+  constructor(props) {
+    super(props)
+    this.state = {
+      success: false
+    }
+  }
+
   render () {
+    this.resetSuccess = this.resetSuccess.bind(this)
+    this.handleResponse = this.handleResponse.bind(this)
+    if(this.state.success) {
+      setTimeout(this.resetSuccess, 2000)
+    }
     return (
       <React.Fragment>
         <h1>Profile</h1>
-        <UserSettingsForm />
-        <h3>user settings form</h3>
-        <h3>best paying jobs</h3>
-        <h3>Owned companies</h3>
+        <Alert
+          show={this.state.success}
+          variant="success"
+          onClose={this.resetSuccess}>
+          User updated.
+        </Alert>
+        <UserForm
+          route="/users"
+          method="PUT"
+          submitBtn="Update"
+          onUpdateUserState={this.handleResponse}/>
       </React.Fragment>
     );
   }
-}
 
-Profile.propTypes = {
-  user: PropTypes.shape({
-    email: PropTypes.string,
-    username: PropTypes.string,
-  }),
+  handleResponse(err,res) {
+    if(res.status == 200) {
+      this.setState({success: true})
+    }
+  }
 
-  jobs: PropTypes.arrayOf(PropTypes.shape({
-    company: PropTypes.string,
-    department: PropTypes.string,
-    salary: PropTypes.float
-  })),
-
-  companies: PropTypes.arrayOf(PropTypes.shape({
-    name: PropTypes.string,
-    n_departments: PropTypes.string,
-    n_employees: PropTypes.float
-  }))
+  resetSuccess() {
+    this.setState({success: false})
+  }
 }
 
 export default Profile

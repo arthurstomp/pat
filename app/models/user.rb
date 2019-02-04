@@ -30,6 +30,14 @@ class User < ApplicationRecord
 
   validates :email, :username, presence: true, uniqueness: true
   validates_format_of :email, :with => /\A([^@\s]+)@((?:[-a-z0-9]+\.)+[a-z]{2,})\z/i
+
+  def admin_and_owned_companies
+    admin_ids = admin_of_companies.pluck(:id)
+    owned_ids = owned_companies.pluck(:id)
+    merged_ids = (admin_ids + owned_ids).uniq
+
+    Company.where(id: merged_ids)
+  end
   
   def connected_to_companies
     owned_ids = owned_companies.pluck(:id)
@@ -100,11 +108,7 @@ class User < ApplicationRecord
       Pat::Application.config.jwt_auth[:alg]
   end
 
-  def to_builder
-    JBuilder.new do |user|
-      user.email email
-      user.username username
-      user.jwt jwt
-    end
+  def request_builder(request = {})
+    FrontMakeup::User.new self, request
   end
 end

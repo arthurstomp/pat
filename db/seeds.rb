@@ -7,35 +7,33 @@ def log_persisted(m)
   end
 end
 
-company_a = Company.create(name: "Company A")
-log_persisted(company_a)
+def create_companies(user, other_user)
+  c1 = FactoryBot.create(:company, user: user)
+  admin = c1.departments.create name: "Admin"
+  sales = c1.departments.create name: "Sales"
 
-company_B = Company.create(name: "Company B")
-log_persisted(company_b)
+  c1.employees.create user: user, department: admin, role: "administrator"
+  c1.employees.create user: FactoryBot.create(:user), department: sales, role: "employee"
 
-admin_a = CreateUserAndEmployeeService.execute(
-  email: "admin_a@company_a.com",
-  username: "admin_a",
-  name: "Admin A",
-  company: company_a,
-  role: "administrator"
-)
-log_persisted(admin_a)
+  c2 = FactoryBot.create(:company, user: user)
+  admin = c2.departments.create name: "Admin"
+  sales = c2.departments.create name: "Sales"
 
-admin_b = CreateUserAndEmployeeService.execute(
-  email: "admin_b@company_b.com",
-  username: "admin_b",
-  name: "Admin B",
-  company: company_b,
-  role: "administrator"
-)
-log_persisted(admin_b)
+  c2.employees.create user: user, department: admin, role: "administrator"
+  c2.employees.create user: other_user, department: sales, role: "administrator"
+  [c1,c2]
+end
 
-employee_a1 = CreateUserAndEmployeeService.execute(
-  email: "admin_a@company_a.com",
-  username: "admin_a",
-  name: "Admin A",
-  company: company_a,
-  role: "administrator"
-)
+
+user_1 = FactoryBot.create(:user)
+user_2 = FactoryBot.create(:user)
+
+companies1 = create_companies(user_1, user_2)
+companies2 = create_companies(user_2, user_1)
+
+company_1A = FactoryBot.create(:company, user: user_1)
+company_1A = FactoryBot.create(:company, user: user_1)
+company_2A = FactoryBot.create(:company, user: user_2)
+
+
 

@@ -1,6 +1,6 @@
 import React from "react"
 import PropTypes from "prop-types"
-class Departments extends React.Component {
+class Department extends React.Component {
   render () {
     return (
       <React.Fragment>
@@ -9,4 +9,4 @@ class Departments extends React.Component {
   }
 }
 
-export default Departments
+export default Department

@@ -5,6 +5,10 @@ class UserPolicy < ApplicationPolicy
     end
   end
 
+  def login?
+    true
+  end
+
   def index?
     false
   end

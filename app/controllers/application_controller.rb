@@ -18,8 +18,12 @@ class ApplicationController < ActionController::Base
 
   def jwt_user
     return @jwt_user if @jwt_user
-    jwt = request.headers("authorization").split[1]
-    claims = JWT.decode jwt, 
+    return nil unless request.headers["authorization"]
+    jwt = request.headers["authorization"].split[1]
+    claims = JWT.decode jwt,
+      Pat::Application.config.jwt_auth[:secret],
+      true,
+      {algorithm: Pat::Application.config.jwt_auth[:alg]}
     payload = claims[0]
     @jwt_user = User.find_by email: payload["email"]
   end

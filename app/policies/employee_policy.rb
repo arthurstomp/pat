@@ -1,21 +1,17 @@
 class EmployeePolicy < ApplicationPolicy
   class Scope < Scope
     def resolve
-      if user.admin?
-        scope.where(company: user.employee_of_companies)
-      else
-        scope.none
-      end
+      scope.where(user: user)
     end
   end
 
   def index?
-    user.admin?
+    true
   end
 
   def show?
-    user.admin? ||
-      record_belongs_to_user
+    record_belongs_to_user? ||
+      record.company.user_is_admin?(user)
   end
   alias_method :update?, :show?
   alias_method :destroy?, :show?
@@ -26,7 +22,7 @@ class EmployeePolicy < ApplicationPolicy
 
   private
 
-  def record_belongs_to_user
-    user.jobs.include? record
+  def record_belongs_to_user?
+    record.user == user
   end
 end

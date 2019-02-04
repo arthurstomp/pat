@@ -3,26 +3,32 @@ import PropTypes from "prop-types"
 import { Nav, NavDropdown, Button } from "react-bootstrap"
 import { Link } from "react-router-dom";
 import { withRouter } from "react-router-dom"
-import types from "./prop_types"
+import types from "../prop_types"
+import { connectToUser } from "../connectors"
 
 class UserNavbarBtn extends React.Component {
   render () {
     return (
       <React.Fragment>
         <Nav id="user-nav" className="ml-auto">
-          {this.props.user && this.renderUserDropdown(this.props.user)}
-          {!this.props.user && this.renderLoginBtn()}
+          {this.props.user.jwt && this.renderUserDropdown(this.props.user)}
+          {!this.props.user.jwt && this.renderLoginBtn()}
         </Nav>
       </React.Fragment>
     );
   }
 
   goToProfile() {
-    this.props.history.replace('/profile')
+    this.props.history.push('/')
   }
 
   logout() {
     console.log("logout")
+    this.props.logout()
+  }
+
+  goToLogin() {
+    this.props.history.push('/login')
   }
 
   renderUserDropdown(user) {
@@ -43,10 +49,11 @@ class UserNavbarBtn extends React.Component {
   }
 
   renderLoginBtn() {
+    this.goToLogin = this.goToLogin.bind(this)
     return (
       <Nav.Item>
-        <Button>
-          <Link to="/login">Login</Link>
+        <Button onClick={this.goToLogin}>
+          Login
         </Button>
       </Nav.Item>
     )
@@ -61,4 +68,4 @@ UserNavbarBtn.propTypes = {
   user: types.user_shape,
 }
 
-export default withRouter(UserNavbarBtn)
+export default withRouter(connectToUser(UserNavbarBtn))

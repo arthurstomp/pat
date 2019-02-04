@@ -1,9 +1,14 @@
 Rails.application.routes.draw do
+  get '*path',
+    to: 'application#root',
+    constraints: lambda{|req| req.headers["content-type"] != "application/json"}
   root to: "application#root"
-  # For details on the DSL available within this file, see http://guides.rubyonrails.org/routing.html
-  resource :users, only: :create do
-    get '/', to: 'users#show' 
-    put '/', to: 'users#update'
-    delete '/', to: 'user#delete'
+
+  resources :companies, except: [:new, :edit] do
+    get '/report', to: "companies#report", on: :member
   end
+  resource :users, except: [:new, :edit] do
+    post '/login', to: 'users#login'
+  end
+  resources :jobs, except: [:delete], controller: :employees
 end

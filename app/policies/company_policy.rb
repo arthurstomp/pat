@@ -1,7 +1,7 @@
 class CompanyPolicy < ApplicationPolicy
   class Scope < Scope
     def resolve
-      scope.where(id: user.connected_to_companies)
+      user.admin_and_owned_companies
     end
   end
 
@@ -14,13 +14,18 @@ class CompanyPolicy < ApplicationPolicy
   end
 
   def create?
-    true
+    record.user = user
   end
 
   def update?
     user_owns_company?
   end
   alias_method :destroy?, :update?
+
+  def report?
+    record.user_is_admin?(user)
+  end
+  alias_method :departments, :report?
 
   private
 
