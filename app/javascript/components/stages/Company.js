@@ -3,6 +3,7 @@ import PropTypes from "prop-types"
 import types from "../prop_types"
 import { connectToUser, connectToCompanies } from "../connectors"
 import ReportTable from '../shared/ReportTable'
+import DepartmentsTable from '../shared/DepartmentsTable'
 import request from "superagent"
 
 class Company extends React.Component {
@@ -23,6 +24,7 @@ class Company extends React.Component {
         <h2>Report</h2>
         <ReportTable company_id={company_id}/>
         <h2>Departments</h2>
+        <DepartmentsTable company_id={company_id}/>
       </React.Fragment>
     );
   }

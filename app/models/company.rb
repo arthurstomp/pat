@@ -14,7 +14,7 @@ class Company < ApplicationRecord
 
   def user_is_admin?(user)
     return true if user == self.user
-    job_of_user(user).pluck(:role).include? "admin"
+    job_of_user(user).pluck(:role).include? Employee::Roles[:admin]
   end
 
   def user_is_just_member?(user)

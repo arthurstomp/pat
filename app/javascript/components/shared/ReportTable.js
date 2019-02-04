@@ -61,7 +61,11 @@ class ReportTable extends React.Component {
 
   handleResponse(err, res) {
     if(res.status == 200) {
-      this.setState({data: res.body.report_jobs})
+      var report_jobs = res.body.report_jobs
+      report_jobs = report_jobs.sort(function(a,b) {
+        return b.salary - a.salary
+      })
+      this.setState({data: report_jobs})
       this.forceUpdate()
     }
   }

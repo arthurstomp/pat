@@ -34,18 +34,6 @@ class CompaniesController < ApplicationController
     end
   end
 
-  def departments
-    company = Company.find(params[:id])
-    if company
-      authorize company
-      limit = params[:limit] || 5
-      departments = company.departments.limit(limit)
-      render json: departments(departments).target!
-    else
-      render nothing: true, status: 404
-    end
-  end
-
   def create
     company = Company.new(company_params)
     company.user = current_user
@@ -84,17 +72,6 @@ class CompaniesController < ApplicationController
         jb.salary j.salary
         jb.company j.company.name
         jb.department j.department.name
-      end
-    end
-  end
-
-  def departments_json(departments)
-    Jbuilder.new do |jb|
-      jb.departments departments do |d|
-        jb.id d.id
-        jb.name d.name
-        jb.n_members d.members
-        jb.n_admins d.members.where(members: {role: Employee::Role[:admin]}).count
       end
     end
   end

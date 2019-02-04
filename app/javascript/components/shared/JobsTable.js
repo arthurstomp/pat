@@ -9,17 +9,21 @@ import { Link } from "react-router-dom"
 class JobsTable extends React.Component {
   constructor(props) {
     super(props)
-    this.state = { }
+    this.state = {
+      jobs: this.props.jobs
+    }
   }
   render () {
-    if(this.state.jobs == undefined) {
+    if(!this.state.jobs) {
       this.requestJobs()
     }
+    const self = this
     return (
       <React.Fragment>
         <Table striped>
           <thead>
             <tr>
+              {this.props.show_name && <td>Name</td>}
               <td>Company</td>
               <td>Role</td>
               <td>Department</td>
@@ -30,9 +34,7 @@ class JobsTable extends React.Component {
             {this.state.jobs && this.state.jobs.map(function(j){
               return(
                 <tr key={"job_"+j.id}>
-                  <td>
-                    <Link to={"/job/"+j.id}>{j.company.name}</Link>
-                  </td>
+                  {self.renderLinks(j)}
                   <td>{j.role}</td>
                   <td>{j.department.name}</td>
                   <td>$ {j.salary}</td>
@@ -43,6 +45,23 @@ class JobsTable extends React.Component {
         </Table>
       </React.Fragment>
     );
+  }
+
+  renderLinks(j) {
+    if(this.props.show_name) {
+      return(
+        <React.Fragment>
+          <td>
+            <Link to={"/job/"+j.id}>{ j.name }</Link>
+          </td>
+          <td>
+            {j.company.name}
+          </td>
+        </React.Fragment>
+      )
+    } else {
+      return(<td><Link to={"/job/"+j.id}>{j.company.name}</Link></td>)
+    }
   }
 
   requestJobs() {

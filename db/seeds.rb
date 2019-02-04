@@ -12,15 +12,15 @@ def create_companies(user, other_user)
   admin = c1.departments.create name: "Admin"
   sales = c1.departments.create name: "Sales"
 
-  c1.employees.create user: user, department: admin, role: "administrator"
-  c1.employees.create user: FactoryBot.create(:user), department: sales, role: "employee"
+  c1.employees.create user: user, department: admin, role: "administrator", salary: 5000
+  c1.employees.create user: FactoryBot.create(:user), department: sales, role: "employee", salary: 400
 
   c2 = FactoryBot.create(:company, user: user)
   admin = c2.departments.create name: "Admin"
   sales = c2.departments.create name: "Sales"
 
-  c2.employees.create user: user, department: admin, role: "administrator"
-  c2.employees.create user: other_user, department: sales, role: "administrator"
+  c2.employees.create user: user, department: admin, role: "administrator", salary: 4000
+  c2.employees.create user: other_user, department: sales, role: "administrator", salary: 3870
   [c1,c2]
 end
 

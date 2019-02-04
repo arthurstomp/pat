@@ -22,10 +22,10 @@ class Stage extends React.Component {
         <Col id="stage" md={9}>
           <Route path="/" exact component={protect(Profile)}/>
           <Route path="/login" component={Login}/>
-          <Route path="/companies" component={protect(Companies)} />
-          <Route path="/company/:id" component={protect(Company)} />
-          <Route path="/companies/:company_id/department/:id"
+          <Route path="/companies/:company_id/department/:id" exact
             component={protect(Department)} />
+          <Route path="/companies" exact component={protect(Companies)} />
+          <Route path="/company/:id" exact component={protect(Company)} />
           <Route path="/jobs" component={protect(Jobs)} />
           <Route path="/job/:id" component={protect(Job)} />
         </Col>
