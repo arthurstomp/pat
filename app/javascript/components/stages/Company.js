@@ -85,7 +85,6 @@ class Company extends React.Component {
   }
 
   requestCompany(id) {
-    debugger
     this.handleResponse = this.handleResponse.bind(this)
     request.get("/companies/"+id)
       .set("Content-Type", "application/json")

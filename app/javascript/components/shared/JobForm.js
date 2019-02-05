@@ -80,7 +80,6 @@ class JobForm extends React.Component {
       default:
         state
     }
-    debugger
     this.setState(Object.assign(this.state,state))
     //this.forceUpdate()
   }
@@ -128,7 +127,6 @@ class JobForm extends React.Component {
   }
 
   renderForm() {
-    debugger
     const self = this
     const companies = this.mergedCompanies()
     const departments = this.state.selected_company.departments ? this.state.selected_company.departments : []
