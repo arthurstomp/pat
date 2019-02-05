@@ -43,21 +43,26 @@ class CompaniesTable extends React.Component {
           <tbody>
             {companies.length != 0 &&
                 companies.map(function(c){
-                  return(
-                    <tr key={c.id}>
-                      {renderNameOrLink(c)}
-                      {hasTrait("number_of_departments") &&
-                        <td>{c.number_of_departments}</td>}
-                      {hasTrait("number_of_employees") &&
-                        <td>{c.number_of_employees}</td>}
-                      <td>{c.admin ? "true" : "false"}</td>
-                      <td>{c.owner ? "true" : "false"}</td>
-                      <td>{false && c.owner && 
+                  if(c) {
+                    return(
+                      <tr key={"company_"+c.id}>
+                        {renderNameOrLink(c)}
+                        {hasTrait("number_of_departments") &&
+                          <td>{c.number_of_departments}</td>}
+                        {hasTrait("number_of_employees") &&
+                          <td>{c.number_of_employees}</td>}
+                        <td>{c.admin ? "true" : "false"}</td>
+                        <td>{c.owner ? "true" : "false"}</td>
+                        <td>{false && c.owner && 
                           <Button 
                             onClick={self.createDeleteCompany(c.id)}
-                            variant="danger">Delete</Button>}</td>
-                    </tr>
-                  )
+                            variant="danger">Delete</Button>}
+                        </td>
+                      </tr>
+                    )
+                  } else {
+                    return null
+                  }
             })}
           </tbody>
         </Table>

@@ -2,7 +2,14 @@ class UsersController < ApplicationController
   wrap_parameters format: [:json]
   include Pundit
   before_action :authenticate, except: :login
-  after_action :verify_authorized
+
+  after_action :verify_authorized, except: [:index]
+  after_action :verify_policy_scoped, only: :index
+
+  def index
+    users = policy_scope(User)
+    render json: {users: index_json(users).target!}
+  end
 
   # OK
   # Login or create
@@ -47,5 +54,15 @@ class UsersController < ApplicationController
   
   def user_params
     params.require(:user).permit(:email, :username)
+  end
+
+  def index_json(users)
+    json = Jbuilder.new do |jb|
+      jb.array! users do |u|
+        jb.id u.id
+        jb.username u.username
+        jb.email u.email
+      end
+    end
   end
 end

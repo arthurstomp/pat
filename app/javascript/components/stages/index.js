@@ -6,6 +6,7 @@ import Department from "./Department"
 import Company from "./Company"
 import Companies from "./Companies"
 import Login from "./Login"
+import CreateJob from "./CreateJob"
 
 export {
   Profile,
@@ -15,5 +16,6 @@ export {
   Department,
   Company,
   Companies,
-  Login
+  Login,
+  CreateJob
 }

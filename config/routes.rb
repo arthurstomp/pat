@@ -8,8 +8,8 @@ Rails.application.routes.draw do
     get '/report', to: "companies#report", on: :member
     resources :departments, on: :member
   end
-  resource :users, except: [:new, :edit] do
-    post '/login', to: 'users#login'
+  resources :users, except: [:new, :edit] do
+    post '/login', to: 'users#login', on: :collection
   end
   resources :jobs, except: [:delete], controller: :employees
 end

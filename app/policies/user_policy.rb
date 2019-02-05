@@ -1,11 +1,19 @@
 class UserPolicy < ApplicationPolicy
   class Scope < Scope
     def resolve
-      scope.none
+      scope.all
     end
   end
 
+  def index?
+    true
+  end
+
   def login?
+    true
+  end
+
+  def create?
     true
   end
 
@@ -18,8 +26,4 @@ class UserPolicy < ApplicationPolicy
   end
   alias_method :update?, :show?
   alias_method :destroy?, :show?
-
-  def create?
-    true
-  end
 end

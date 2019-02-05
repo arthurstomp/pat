@@ -65,6 +65,7 @@ class Companies extends React.Component {
   handleResponse(err,res) {
     if(!err) {
       this.props.pushCompany(res.body.company)
+      window.location.reload()
     } else {
       this.props.setErrors(res.body)
     }

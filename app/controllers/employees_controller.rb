@@ -5,15 +5,12 @@ class EmployeesController < ApplicationController
 
   before_action :authenticate
 
-  after_action :verify_authorized, except: :index
+  after_action :verify_authorized, except: [:index]
   after_action :verify_policy_scoped, only: :index
 
   def index
     jobs = policy_scope(Employee.all)
     render json: {jobs: index_json(jobs).target!}
-  end
-
-  def create
   end
 
   def show
@@ -32,14 +29,26 @@ class EmployeesController < ApplicationController
       render json: {job: show_json(job).target!,
                     can_update: job.company.user_is_admin?(current_user) }
     else
-      render nothing: true, status: 400
+      render json: job.errors.full_messages, status: 400
+    end
+  end
+
+  def create
+    job = Employee.new(employee_params)
+    authorize(job)
+    byebug
+    if job.save
+      render json: {job: show_json(job).target!,
+                    can_update: job.company.user_is_admin?(current_user)}
+    else
+      render json: job.errors.full_messages, status: 400
     end
   end
 
   private
 
   def employee_params
-    params.require(:job).permit([:name, :company_id, :department_id, :salary, :role])
+    params.require(:job).permit([:name,:user_id, :company_id, :department_id, :salary, :role])
   end
 
   def index_json(jobs)
@@ -47,6 +56,11 @@ class EmployeesController < ApplicationController
       jb.array! jobs do |j|
         jb.id j.id
         jb.role j.role
+        jb.set! :user do
+          jb.id j.user.id
+          jb.username j.user.username
+          jb.email j.user.email
+        end
         jb.set! :company do
           jb.id j.company.id
           jb.name j.company.name

@@ -57,7 +57,7 @@ class DepartmentsController < ApplicationController
   end
 
   def department_params
-    params.require(:department).permit(:name)
+    params.require(:department).permit(:name, :company_id)
   end
 
   def departments_json(departments)

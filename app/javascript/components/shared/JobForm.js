@@ -14,13 +14,15 @@ class JobForm extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
-      job: null,
+      job: props.job,
+      users: [],
       companies: [],
       departments: [],
-      can_update: false,
+      can_update: props.create,
+      selectedUser: {},
       selected_company: {},
       selected_department: {},
-      selected_role: "Employee",
+      selected_role: "employee",
       success: false
     }
   }
@@ -38,9 +40,16 @@ class JobForm extends React.Component {
     }
   }
 
+  shouldFetchUsers() {
+    if(this.props.create && this.state.users.length == 0) {
+      this.fetchUsers()
+    }
+  }
+
   render() {
     this.shouldFetchJob()
     this.shouldFetchCompanies()
+    this.shouldFetchUsers()
     if(this.state.job) {
       return this.renderForm()
     }
@@ -53,6 +62,9 @@ class JobForm extends React.Component {
 		const name = target.id
     var state = this.state
     switch(name) {
+      case "user":
+        state =this.setUserState(state, name, value)
+        break
       case "department":
         state = this.setDepartmentState(state, name, value)
         break
@@ -68,17 +80,9 @@ class JobForm extends React.Component {
       default:
         state
     }
+    debugger
     this.setState(Object.assign(this.state,state))
-    if(["department", "company"].includes(name)){
-      if(name == "company") {
-      } else {
-      }
-    } else {
-      this.setState(Object.assign(state,{
-        [name]: value
-      }))
-    }
-    this.forceUpdate
+    //this.forceUpdate()
   }
 
   setCompanyState(state, name, value) {
@@ -97,9 +101,18 @@ class JobForm extends React.Component {
 
   setDepartmentState(state, name, value) {
     if(name == "department") {
-      const selected_department = this.state.departments.filter((d)=> {d.id == parseInt(value)})[0]
+      const selected_department = this.state.departments.filter((d)=> {return d.id == parseInt(value)})[0]
       return Object.assign(state, {
         selected_department: selected_department
+      })
+    }
+  }
+
+  setUserState(state, name, value) {
+    if(name == "user") {
+      const selected_user = this.state.users.filter((u) => {return u.id == parseInt(value)})[0]
+      return Object.assign(state, {
+        selected_user: selected_user
       })
     }
   }
@@ -115,6 +128,7 @@ class JobForm extends React.Component {
   }
 
   renderForm() {
+    debugger
     const self = this
     const companies = this.mergedCompanies()
     const departments = this.state.selected_company.departments ? this.state.selected_company.departments : []
@@ -133,14 +147,7 @@ class JobForm extends React.Component {
           Job updated.
         </Alert>
         <Form>
-          <Form.Group controlId="username">
-            <Form.Label>Username</Form.Label>
-            <Form.Control 
-              type="text"
-              disabled={true}
-              defaultValue={this.state.job.name}
-              onChange={this.handleChanges}/>
-          </Form.Group>
+          {this.renderUsername()}
 
           <Form.Group controlId="role">
             <Form.Label>Role</Form.Label>
@@ -217,9 +224,54 @@ class JobForm extends React.Component {
     )
   }
 
+  renderUsername() {
+    if(this.props.create) {
+      return this.renderUsernameForm()
+    } else {
+      return (
+        <Form.Group controlId="user">
+          <Form.Label>Username</Form.Label>
+          <Form.Control 
+            type="text"
+            disabled={!this.props.create}
+            defaultValue={this.state.job.name}
+            onChange={this.handleChanges}/>
+        </Form.Group>
+      )
+    }
+  }
+  renderUsernameForm() {
+    const users = this.state.users
+    return(
+      <Form.Group controlId="user">
+        <Form.Label>Department</Form.Label>
+        <Form.Control as="select"
+          disabled={!this.state.can_update}
+          defaultValue={this.selected_user_id ? this.selected_user_id : null}
+          onChange={this.handleChanges}>
+          {users.length != 0 &&
+            users.map(function(u) {
+              return(
+                <option
+                  key={"user_"+u.id}
+                  value={u.id}>
+                  {u.username} - {u.email}
+                </option>
+              )
+            })}
+        </Form.Control>
+      </Form.Group>
+    )
+  }
+
   mergedCompanies() {
+    var merged;
     if(this.state.job) {
-      var merged = [this.state.job.company].concat(this.state.companies)
+      if(this.state.job.company) {
+        merged = [this.state.job.company ].concat(this.state.companies)
+      }else {
+        merged = this.state.companies
+      }
       merged = _.uniqBy(merged, function(e) { return e.id })
       return merged
     } else {
@@ -248,10 +300,11 @@ class JobForm extends React.Component {
       .set("Content-Type", "application/json")
       .set("Authorization", "Bearer: "+this.props.user.jwt)
       .send({job: {
-        company: this.state.selected_company_id,
-        department: this.state.department_id,
+        user_id: this.state.selected_user.id ? this.state.selected_user.id : null,
+        company_id: this.state.selected_company.id ? this.state.selected_company.id : null,
+        department_id: this.state.selected_department.id ? this.state.selected_department.id : null,
         salary: this.state.salary,
-        role: this.state.role
+        role: this.state.selected_role
       }})
       .end(this.updateJobState)
   }
@@ -285,6 +338,8 @@ class JobForm extends React.Component {
         selected_company: company,
         selected_department: department,
         success: res.req.method == "PUT" || res.req.method == "POST"})
+    } else {
+      this.props.setErrors(res.body.errors)
     }
     this.props.onUpdateJobState(err,res)
   }
@@ -308,7 +363,23 @@ class JobForm extends React.Component {
         self.setDepartments = self.setDepartments.bind(self)
         const companies = JSON.parse(res.body.companies)
         self.setDepartments(companies)
-        self.setState({companies: companies})
+        const state = self.state
+        var newState = Object.assign(state, {companies: companies})
+        if(!newState.selected_company) {
+          newState = Object.assign(newState, {selected_company: companies[0]})
+        }
+        self.setState({companies: companies, selected_company: companies[0]})
+      })
+  }
+
+  fetchUsers() {
+    const self = this
+    request.get("/users")
+      .set("Content-Type", "application/json")
+      .set("Authorization", "Bearer: "+this.props.user.jwt)
+      .end(function(err,res) {
+        const users = JSON.parse(res.body.users)
+        self.setState({users: users, selected_user: users[0]})
       })
   }
 
