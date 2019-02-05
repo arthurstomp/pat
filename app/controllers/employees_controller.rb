@@ -15,17 +15,15 @@ class EmployeesController < ApplicationController
 
   def show
     job = Employee.find(params[:id])
-    if job and authorize(job)
-      render json: {job: show_json(job).target!,
-                    can_update: job.company.user_is_admin?(current_user) }
-    else
-      render nothing: true, status: 400
-    end
+    authorize(job)
+    render json: {job: show_json(job).target!,
+                  can_update: job.company.user_is_admin?(current_user) }
   end
 
   def update
     job = Employee.find(params[:id])
-    if job.update_attributes(employee_params) and authorize(job)
+    authorize(job)
+    if job.update_attributes(employee_params) 
       render json: {job: show_json(job).target!,
                     can_update: job.company.user_is_admin?(current_user) }
     else
@@ -36,7 +34,6 @@ class EmployeesController < ApplicationController
   def create
     job = Employee.new(employee_params)
     authorize(job)
-    byebug
     if job.save
       render json: {job: show_json(job).target!,
                     can_update: job.company.user_is_admin?(current_user)}

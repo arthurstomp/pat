@@ -5,10 +5,6 @@ class UserPolicy < ApplicationPolicy
     end
   end
 
-  def index?
-    true
-  end
-
   def login?
     true
   end
@@ -17,12 +13,8 @@ class UserPolicy < ApplicationPolicy
     true
   end
 
-  def index?
-    false
-  end
-
   def show?
-    user == record
+    user.id == record.id
   end
   alias_method :update?, :show?
   alias_method :destroy?, :show?

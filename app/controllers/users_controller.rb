@@ -11,8 +11,6 @@ class UsersController < ApplicationController
     render json: {users: index_json(users).target!}
   end
 
-  # OK
-  # Login or create
   def login
     user = User.find_by(email: user_params[:email],
                         username: user_params[:username])
@@ -31,7 +29,6 @@ class UsersController < ApplicationController
       status: 200
   end
 
-  # OK
   def update
     filtered_user_params = user_params.delete_if do |k,v|
       v == nil || v.empty?
@@ -44,10 +41,10 @@ class UsersController < ApplicationController
     end
   end
 
-  def delete
+  def destroy
     authorize current_user
     current_user.destroy
-    render :nothing, status: 204
+    render json: nil, status: 204
   end
 
   private

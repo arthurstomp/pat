@@ -26,12 +26,4 @@ class CompanyPolicy < ApplicationPolicy
   def user_is_admin?
     record.user_is_admin? user
   end
-
-  def user_owns_company?
-    user.owned_companies.include? record
-  end
-
-  def user_has_connection_to_company?
-    user.connected_to_companies.include? record
-  end
 end

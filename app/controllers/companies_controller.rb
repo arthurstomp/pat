@@ -16,28 +16,23 @@ class CompaniesController < ApplicationController
 
   def show
     company = Company.find(params[:id])
-    if company
-      authorize company
-      render json: { company: FrontMakeup::Company.new(company, current_user).to_build_for.target!}
-    end
+    authorize company
+    render json: { company: FrontMakeup::Company.new(company, current_user).to_build_for.target!}
   end
 
   def report
     company = Company.find(params[:id])
-    if company
-      authorize company
-      limit = params[:limit] || 5
-      employees = company.employees.order(salary: :desc).limit(limit)
-      render json: report_json(employees).target!
-    else
-      render nothing: "", status: 404
-    end
+    authorize(company)
+    limit = params[:limit] || 5
+    employees = company.employees.order(salary: :desc).limit(limit)
+    render json: report_json(employees).target!
   end
+
 
   def create
     company = Company.new(company_params)
     company.user = current_user
-    authorize company
+    authorize(company)
     if company.save
       render json: { company: FrontMakeup::Company.new(company, current_user).to_build_for.target!}
     else
@@ -47,9 +42,8 @@ class CompaniesController < ApplicationController
 
   def destroy
     company = Company.find(params[:id])
-    if authorize company
-      company.destroy
-    end
+    authorize company
+    company.destroy
     render json: nil, status: 204
   end
 

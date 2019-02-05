@@ -16,26 +16,14 @@ class DepartmentsController < ApplicationController
 
   def show
     department = company.departments.find(params[:id])
-    if authorize(department)
-      render json: { department: department_json(department).target! }
-    else
-      render nothing: true, status: 400
-    end
+    authorize(department)
+    render json: { department: department_json(department).target! }
   end
 
   def create
     department = company.departments.new(department_params)
     if authorize(department) && department.save
-      render json: {department: department_json(department)}
-    else
-      render json: department.errors.full_messages, status: 400
-    end
-  end
-
-  def members
-    department = company.departments.find(params[:id])
-    if authorize(departments)
-      render json: {department: department_json(department)}
+      render json: {department: department_json(department).target!}
     else
       render json: department.errors.full_messages, status: 400
     end
@@ -43,7 +31,8 @@ class DepartmentsController < ApplicationController
 
   def update
     department = company.departments.find(params[:id])
-    if authorize(department) and department.update_attributes(department_params)
+    authorize(department)
+    if department.update_attributes(department_params)
       render json: {department: department_json(department.reload).target!}
     else
       render json: department.errors.full_messages, status: 400

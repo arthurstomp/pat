@@ -54,18 +54,26 @@ RSpec.describe EmployeePolicy do
 
       it { should permit(:index) }
 
-      it "should return companies employees if user is admin" do
+      it "should return companies employees belong to user" do
         user.jobs << create(:employee)
-        allow(user).to receive(:admin?).and_return(true)
-        c = user.employee_of_companies.first
-        # Create another employee
-        create(:employee, company: c)
-        expect(resolved_scope.to_a).to eq(c.employees.to_a)
+        expect(resolved_scope.to_a).to eq(user.jobs.to_a)
       end
     end
 
     context "show?" do
-      it { should permit(:show) }
+      it "should permit if record belongs to user" do
+        company = create(:company)
+        employee = create(:employee, company: company, user: user)
+        subject = described_class.new(user, employee)
+        expect(subject).to permit_action(:show)
+      end
+
+      it "permits if record's company is admin by user" do
+        company = create(:company, user: user)
+        employee = create(:employee, company: company)
+        subject = described_class.new(user, employee)
+        expect(subject).to permit_action(:show)
+      end
     end
 
     context "create?" do

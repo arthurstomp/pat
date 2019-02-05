@@ -6,10 +6,11 @@ RSpec.describe UserPolicy do
   subject { described_class.new(user, user) }
 
   it "returns [] as scope" do
-    resolved_scope = described_class::Scope.new(user, User.all).resolve
-    expect(resolved_scope).to eq []
+    resolved_scope = described_class::Scope.new(user, User).resolve
+    expect(resolved_scope).to eq User.all
   end
-  it { should_not permit(:index) }
+
+  it { should permit(:login) }
   it { should permit(:show) }
   it { should permit(:create) }
 end

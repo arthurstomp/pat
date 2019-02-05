@@ -14,20 +14,18 @@ RSpec.describe CompanyPolicy do
     resolved_scope = described_class::Scope.new(user, Company.all).resolve
 
     expect(resolved_scope).to include(*user.owned_companies)
-    expect(resolved_scope).to include(someones_company)
+    expect(resolved_scope).not_to include(someones_company)
     
-    total_of_companies = user.connected_to_companies.count
+    total_of_companies = user.owned_companies.size + user.admin_of_companies.size
     expect(resolved_scope.count).to eq total_of_companies
   end
 
   it { should permit(:index) }
 
   it "permits :show user that connection to the company" do
-    allow(user).to receive(:connected_to_companies).and_return([company])
+    allow(company).to receive(:user_is_admin?).and_return(true)
     expect(subject).to permit_action(:show)
   end
-
-  it { should_not permit(:show) }
 
   it { should permit(:create) }
 

@@ -83,6 +83,19 @@ RSpec.describe User, type: :model do
     end
   end
 
+  describe "#admin_and_owned_companies" do
+    it "returns companies that are either owned or admin" do
+      user = create :user
+      c1 = create :company, user: user
+      c2 = create :company
+      c3 = create :company
+      e = create :employee_admin, company: c2, user: user
+      expect(user.admin_and_owned_companies).to include(c1)
+      expect(user.admin_and_owned_companies).to include(c2)
+      expect(user.admin_and_owned_companies).not_to include(c3)
+    end
+  end
+
   describe "#connected_to_departments" do
     subject { create :user }
     before :each do
@@ -235,11 +248,23 @@ RSpec.describe User, type: :model do
     end
   end
 
-  describe "claim" do
+  describe "#claim" do
     subject { build :user }
 
     it "should return claim with email and username" do
       expect(subject.claim).to eq({email: subject.email, username: subject.username})
     end
+  end
+
+  describe "#jwt" do
+    subject { build :user }
+
+    it "returns the jwt for user claim" do
+      expect(subject.jwt).to be_a String
+    end
+  end
+
+  describe "#request_builder" do
+    it { expect(subject.request_builder).to be_a FrontMakeup::User }
   end
 end
