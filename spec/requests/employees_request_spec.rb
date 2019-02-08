@@ -30,7 +30,7 @@ RSpec.describe "Users API", type: :request do
     end
   end
 
-  describe "POST /companies/" do
+  describe "POST /jobs/" do
     it "returns job" do
       company = create :company, user: user
       department = create :department, company: company 

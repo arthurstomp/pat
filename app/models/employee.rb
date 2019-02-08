@@ -6,6 +6,8 @@ class Employee < ApplicationRecord
   belongs_to :department
   belongs_to :user, inverse_of: :jobs
 
+  scope :biggest_salary, -> { unscope(:order).order(salary: :desc)}
+
   validates :company_id, :department_id, presence: true
   validate :validate_role
 

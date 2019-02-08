@@ -17,7 +17,6 @@ class FrontMakeup::Company
     end
 
     def serve_request(req)
-      #byebug
       Jbuilder.new do |jb|
         jb.array! resolve(req).to_a do |c|
           if c.user_is_admin?(user)

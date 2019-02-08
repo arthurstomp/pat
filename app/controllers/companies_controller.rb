@@ -23,8 +23,8 @@ class CompaniesController < ApplicationController
   def report
     company = Company.find(params[:id])
     authorize(company)
-    limit = params[:limit] || 5
-    employees = company.employees.order(salary: :desc).limit(limit)
+    limit = params[:limit] || 3
+    employees = company.report(limit)
     render json: report_json(employees).target!
   end
 

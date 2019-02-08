@@ -20,4 +20,15 @@ class Company < ApplicationRecord
   def user_is_just_member?(user)
     not user_is_admin?(user)
   end
+
+  def report(n_jobs_per_department)
+    departments.unscope(:order).order(:name).to_a.inject([]) do |acc, d|
+      jobs = d.members.biggest_salary.limit(n_jobs_per_department)
+      jobs = jobs.sort do |ja, jb|
+        #jb.department.name <=> ja.department.name and jb.salary <=> ja.salary
+        jb.salary <=> ja.salary
+      end
+      acc + jobs
+    end
+  end
 end
