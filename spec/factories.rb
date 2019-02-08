@@ -6,6 +6,7 @@ FactoryBot.define do
     department
     user
     role { "employee" }
+    salary { Random.rand(100_000) }
 
     trait :admin do
       role { "administrator" }

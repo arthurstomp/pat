@@ -71,12 +71,18 @@ RSpec.describe "Companies API", type: :request do
   describe "GET /companies/:id/report" do
     it "return jobs on report" do
       headers = {"Content-Type"=> "application/json"}.merge(login(user))
-      e1 = create(:employee, company: company, salary: 3)
-      e2 = create(:employee_admin, company: company, salary:2)
-      e3 = create(:employee, company: company, salary:1)
+      d1 = create :department, company: company
+      d2 = create :department, company: company
+      d3 = create :department, company: company
+      deps = [d1,d2,d3]
+      20.times do
+        rand_dep_index = Random.rand(0..deps.length - 1)
+        d = deps[rand_dep_index]
+        create :employee, company: company, department: d
+      end
       get "/companies/#{company.id}/report", headers: headers
       jobs = JSON.parse(response.body)["report_jobs"]
-      expect(jobs.count).to eq 3
+      expect(jobs.count).to eq 9
     end
   end
 
