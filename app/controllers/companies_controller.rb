@@ -25,6 +25,7 @@ class CompaniesController < ApplicationController
     authorize(company)
     limit = params[:limit] || 3
     employees = company.report(limit)
+
     render json: report_json(employees).target!
   end
 
